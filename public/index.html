@@ -55,10 +55,10 @@
     }
 
     .logo-mark {
-      width: 24px;
-      height: 24px;
-      background: #6366f1;
-      border-radius: 6px;
+      width: 26px;
+      height: 26px;
+      background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
+      border-radius: 7px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -94,7 +94,7 @@
 
     .hero {
       text-align: center;
-      margin-bottom: 56px;
+      margin-bottom: 48px;
     }
 
     .hero-tag {
@@ -134,7 +134,7 @@
       background: #18181b;
       border-radius: 10px;
       overflow: hidden;
-      margin-bottom: 48px;
+      margin-bottom: 40px;
       border: 1px solid #18181b;
     }
 
@@ -358,13 +358,21 @@
 
     .loading-text {
       font-size: 15px;
-      color: #71717a;
+      color: #a1a1aa;
       margin-bottom: 6px;
     }
 
     .loading-sub {
       font-size: 12px;
       color: #3f3f46;
+    }
+
+    .loading-timer {
+      margin-top: 16px;
+      font-size: 28px;
+      font-weight: 600;
+      color: #27272a;
+      font-variant-numeric: tabular-nums;
     }
 
     @keyframes spin {
@@ -398,9 +406,6 @@
     }
 
     .result-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
       padding: 20px 24px;
       border-bottom: 1px solid #1c1c22;
     }
@@ -410,29 +415,6 @@
       font-weight: 600;
       color: #fafafa;
       letter-spacing: -0.3px;
-    }
-
-    .result-actions {
-      display: flex;
-      gap: 10px;
-    }
-
-    .download-btn {
-      padding: 8px 18px;
-      background: #fafafa;
-      color: #09090b;
-      border: none;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
-      transition: background 0.15s;
-      letter-spacing: -0.1px;
-    }
-
-    .download-btn:hover {
-      background: #e4e4e7;
     }
 
     .comparison {
@@ -473,20 +455,46 @@
       color: #6366f1;
     }
 
+    .result-footer {
+      padding: 16px 24px;
+      border-top: 1px solid #1c1c22;
+      display: flex;
+      gap: 10px;
+    }
+
+    .download-btn {
+      flex: 1;
+      padding: 12px 24px;
+      background: #fafafa;
+      color: #09090b;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s;
+      letter-spacing: -0.1px;
+      text-align: center;
+    }
+
+    .download-btn:hover {
+      background: #e4e4e7;
+    }
+
     .new-btn {
-      display: block;
-      width: 100%;
-      margin-top: 16px;
+      flex: 1;
       padding: 12px;
       background: transparent;
       border: 1px solid #27272a;
-      border-radius: 8px;
+      border-radius: 6px;
       color: #71717a;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 500;
       font-family: inherit;
       cursor: pointer;
       transition: border-color 0.2s, color 0.2s;
+      text-align: center;
     }
 
     .new-btn:hover {
@@ -504,10 +512,22 @@
       color: #ef4444;
       margin-top: 16px;
       animation: fadeIn 0.3s ease;
+      line-height: 1.5;
     }
 
     .error-msg.visible {
       display: block;
+    }
+
+    .retry-link {
+      color: #ef4444;
+      text-decoration: underline;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .retry-link:hover {
+      color: #f87171;
     }
 
     footer {
@@ -516,30 +536,12 @@
     }
 
     footer .container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      text-align: center;
     }
 
     footer p {
       font-size: 12px;
       color: #27272a;
-    }
-
-    footer .footer-links {
-      display: flex;
-      gap: 16px;
-    }
-
-    footer .footer-link {
-      font-size: 12px;
-      color: #3f3f46;
-      text-decoration: none;
-      transition: color 0.15s;
-    }
-
-    footer .footer-link:hover {
-      color: #71717a;
     }
 
     @media (max-width: 640px) {
@@ -548,7 +550,7 @@
       }
 
       .hero {
-        margin-bottom: 36px;
+        margin-bottom: 32px;
       }
 
       .hero h1 {
@@ -586,20 +588,8 @@
         padding: 40px 16px;
       }
 
-      .result-header {
+      .result-footer {
         flex-direction: column;
-        gap: 12px;
-        align-items: stretch;
-      }
-
-      .download-btn {
-        width: 100%;
-        text-align: center;
-      }
-
-      footer .container {
-        flex-direction: column;
-        gap: 12px;
       }
     }
   </style>
@@ -678,15 +668,13 @@
         </div>
         <div class="loading-text">Enhancing your product photo</div>
         <div class="loading-sub">This typically takes 15–30 seconds</div>
+        <div class="loading-timer" id="loading-timer">0s</div>
       </div>
 
       <div class="result-section" id="result">
         <div class="result-card">
           <div class="result-header">
             <div class="result-title">Your enhanced product photo</div>
-            <div class="result-actions">
-              <button class="download-btn" id="download-btn">Download</button>
-            </div>
           </div>
           <div class="comparison">
             <div class="comparison-card">
@@ -698,8 +686,11 @@
               <div class="comparison-label enhanced">Enhanced</div>
             </div>
           </div>
+          <div class="result-footer">
+            <button class="download-btn" id="download-btn">Download enhanced photo</button>
+            <button class="new-btn" id="new-btn">Transform another</button>
+          </div>
         </div>
-        <button class="new-btn" id="new-btn">Transform another photo</button>
       </div>
     </div>
   </main>
@@ -718,6 +709,7 @@
     const promptInput = document.getElementById("prompt-input");
     const transformBtn = document.getElementById("transform-btn");
     const loadingEl = document.getElementById("loading");
+    const loadingTimer = document.getElementById("loading-timer");
     const resultEl = document.getElementById("result");
     const errorEl = document.getElementById("error-msg");
     const originalImg = document.getElementById("original-img");
@@ -729,6 +721,7 @@
 
     let currentBase64 = null;
     let resultBase64 = null;
+    let timerInterval = null;
 
     dropZone.addEventListener("click", () => fileInput.click());
 
@@ -779,7 +772,25 @@
       reader.readAsDataURL(file);
     }
 
-    transformBtn.addEventListener("click", async () => {
+    function startTimer() {
+      let seconds = 0;
+      loadingTimer.textContent = "0s";
+      timerInterval = setInterval(() => {
+        seconds++;
+        loadingTimer.textContent = seconds + "s";
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    }
+
+    transformBtn.addEventListener("click", () => doTransform());
+
+    async function doTransform() {
       if (!currentBase64) return;
 
       hideError();
@@ -787,6 +798,7 @@
       stepsEl.style.display = "none";
       resultEl.classList.remove("visible");
       loadingEl.classList.add("visible");
+      startTimer();
 
       try {
         const resp = await fetch("/api/transform", {
@@ -808,15 +820,17 @@
         originalImg.src = currentBase64;
         resultImg.src = resultBase64;
 
+        stopTimer();
         loadingEl.classList.remove("visible");
         resultEl.classList.add("visible");
       } catch (err) {
+        stopTimer();
         loadingEl.classList.remove("visible");
         uploadCard.style.display = "block";
         stepsEl.style.display = "grid";
-        showError(err.message);
+        showError(err.message + ' <span class="retry-link" onclick="doTransform()">Try again</span>');
       }
-    });
+    }
 
     downloadBtn.addEventListener("click", () => {
       if (!resultBase64) return;
@@ -850,12 +864,12 @@
     });
 
     function showError(msg) {
-      errorEl.textContent = msg;
+      errorEl.innerHTML = msg;
       errorEl.classList.add("visible");
     }
 
     function hideError() {
-      errorEl.textContent = "";
+      errorEl.innerHTML = "";
       errorEl.classList.remove("visible");
     }
   </script>
