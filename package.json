@@ -1,7 +1,7 @@
 {
-  "name": "hello-world-app",
+  "name": "productshot-ai",
   "version": "1.0.0",
-  "description": "A simple Hello World web app",
+  "description": "Transform amateur product photos into professional e-commerce photography",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

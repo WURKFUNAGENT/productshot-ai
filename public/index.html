@@ -3,110 +3,639 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hello World</title>
+  <title>ProductShot AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0a0a0a;
+      color: #e5e5e5;
       min-height: 100vh;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-      color: #fff;
-      overflow: hidden;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
     }
 
     .container {
-      text-align: center;
-      animation: fadeIn 1s ease-out;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px;
+      width: 100%;
     }
 
-    h1 {
-      font-size: clamp(2.5rem, 8vw, 5rem);
-      font-weight: 800;
-      background: linear-gradient(to right, #a78bfa, #60a5fa, #34d399);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 1rem;
+    header {
+      padding: 32px 0 0;
     }
 
-    p {
-      font-size: 1.25rem;
-      color: rgba(255, 255, 255, 0.7);
-      margin-bottom: 2rem;
+    header .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: -0.3px;
+    }
+
+    .logo span {
+      color: #6366f1;
     }
 
     .badge {
-      display: inline-block;
-      padding: 0.5rem 1.5rem;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      font-size: 0.875rem;
-      color: rgba(255, 255, 255, 0.8);
+      font-size: 11px;
+      font-weight: 500;
+      color: #6366f1;
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      padding: 4px 10px;
+      border-radius: 4px;
+      letter-spacing: 0.3px;
     }
 
-    .orbs {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: -1;
+    main {
+      flex: 1;
+      padding: 60px 0 80px;
     }
 
-    .orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
+    .hero {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .hero h1 {
+      font-size: 40px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -1.2px;
+      line-height: 1.1;
+      margin-bottom: 14px;
+    }
+
+    .hero p {
+      font-size: 16px;
+      color: #737373;
+      max-width: 480px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .upload-section {
+      margin-bottom: 32px;
+    }
+
+    .drop-zone {
+      border: 1.5px dashed #262626;
+      border-radius: 8px;
+      padding: 56px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      background: rgba(255, 255, 255, 0.01);
+      position: relative;
+    }
+
+    .drop-zone:hover, .drop-zone.drag-over {
+      border-color: #6366f1;
+      background: rgba(99, 102, 241, 0.03);
+    }
+
+    .drop-zone.has-image {
+      padding: 24px;
+    }
+
+    .drop-zone-icon {
+      width: 40px;
+      height: 40px;
+      margin: 0 auto 16px;
+      opacity: 0.3;
+    }
+
+    .drop-zone-icon svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .drop-zone-text {
+      font-size: 15px;
+      color: #a3a3a3;
+      margin-bottom: 6px;
+    }
+
+    .drop-zone-text strong {
+      color: #6366f1;
+      font-weight: 500;
+    }
+
+    .drop-zone-hint {
+      font-size: 12px;
+      color: #525252;
+    }
+
+    .drop-zone .preview-wrapper {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .drop-zone .preview-wrapper img {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 4px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .drop-zone .change-label {
+      margin-top: 12px;
+      font-size: 12px;
+      color: #525252;
+    }
+
+    #file-input {
+      display: none;
+    }
+
+    .prompt-section {
+      margin-bottom: 32px;
+    }
+
+    .prompt-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: #525252;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 8px;
+    }
+
+    .prompt-input {
+      width: 100%;
+      background: #141414;
+      border: 1px solid #1f1f1f;
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-size: 14px;
+      color: #e5e5e5;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+      resize: none;
+      height: 44px;
+    }
+
+    .prompt-input::placeholder {
+      color: #404040;
+    }
+
+    .prompt-input:focus {
+      border-color: #6366f1;
+    }
+
+    .transform-btn {
+      width: 100%;
+      padding: 14px 24px;
+      background: #6366f1;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s, opacity 0.2s;
+      letter-spacing: -0.2px;
+    }
+
+    .transform-btn:hover {
+      background: #5558e6;
+    }
+
+    .transform-btn:disabled {
       opacity: 0.4;
+      cursor: not-allowed;
     }
 
-    .orb:nth-child(1) {
-      width: 400px; height: 400px;
-      background: #a78bfa;
-      top: -10%; left: -5%;
-      animation: float 8s ease-in-out infinite;
+    .loading-section {
+      display: none;
+      text-align: center;
+      padding: 64px 0;
     }
 
-    .orb:nth-child(2) {
-      width: 300px; height: 300px;
-      background: #60a5fa;
-      bottom: -10%; right: -5%;
-      animation: float 10s ease-in-out infinite reverse;
+    .loading-section.visible {
+      display: block;
+      animation: fadeIn 0.3s ease;
     }
 
-    .orb:nth-child(3) {
-      width: 200px; height: 200px;
-      background: #34d399;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      animation: float 12s ease-in-out infinite;
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 2.5px solid #1f1f1f;
+      border-top-color: #6366f1;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    .loading-text {
+      font-size: 14px;
+      color: #525252;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
+      from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    @keyframes float {
-      0%, 100% { transform: translate(0, 0); }
-      50% { transform: translate(30px, -30px); }
+    .result-section {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .result-section.visible {
+      display: block;
+    }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .result-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: -0.4px;
+    }
+
+    .download-btn {
+      padding: 10px 20px;
+      background: #fff;
+      color: #0a0a0a;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s;
+      letter-spacing: -0.1px;
+    }
+
+    .download-btn:hover {
+      background: #e5e5e5;
+    }
+
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .comparison-card {
+      background: #111;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #1a1a1a;
+    }
+
+    .comparison-card img {
+      width: 100%;
+      display: block;
+      aspect-ratio: 1;
+      object-fit: contain;
+      background: #0d0d0d;
+    }
+
+    .comparison-label {
+      padding: 12px 16px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #525252;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-top: 1px solid #1a1a1a;
+    }
+
+    .new-btn {
+      display: block;
+      width: 100%;
+      margin-top: 20px;
+      padding: 12px;
+      background: transparent;
+      border: 1px solid #1f1f1f;
+      border-radius: 6px;
+      color: #737373;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .new-btn:hover {
+      border-color: #404040;
+      color: #a3a3a3;
+    }
+
+    .error-msg {
+      display: none;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 13px;
+      color: #ef4444;
+      margin-bottom: 24px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .error-msg.visible {
+      display: block;
+    }
+
+    footer {
+      padding: 24px 0;
+      border-top: 1px solid #141414;
+    }
+
+    footer .container {
+      text-align: center;
+    }
+
+    footer p {
+      font-size: 12px;
+      color: #333;
+    }
+
+    @media (max-width: 640px) {
+      .hero h1 {
+        font-size: 28px;
+      }
+
+      .hero p {
+        font-size: 14px;
+      }
+
+      .comparison {
+        grid-template-columns: 1fr;
+      }
+
+      .comparison-card img {
+        aspect-ratio: auto;
+        max-height: 300px;
+      }
+
+      main {
+        padding: 40px 0 60px;
+      }
+
+      .drop-zone {
+        padding: 40px 16px;
+      }
+
+      .result-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+      }
+
+      .download-btn {
+        width: 100%;
+        text-align: center;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="orbs">
-    <div class="orb"></div>
-    <div class="orb"></div>
-    <div class="orb"></div>
-  </div>
-  <div class="container">
-    <h1>Hello, World!</h1>
-    <p>Deployed with Railway</p>
-    <span class="badge">Powered by Node.js + Express</span>
-  </div>
+  <header>
+    <div class="container">
+      <div class="logo">Product<span>Shot</span></div>
+      <div class="badge">AI-Powered</div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="hero">
+        <h1>Transform your product photos</h1>
+        <p>Upload any product photo and get a professional, e-commerce-ready shot in seconds.</p>
+      </div>
+
+      <div id="upload-area" class="upload-section">
+        <div class="drop-zone" id="drop-zone">
+          <div class="drop-zone-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+            </svg>
+          </div>
+          <div class="drop-zone-text">Drag and drop your product photo, or <strong>browse</strong></div>
+          <div class="drop-zone-hint">JPEG or PNG, up to 10 MB</div>
+        </div>
+        <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp">
+      </div>
+
+      <div id="prompt-area" class="prompt-section" style="display:none;">
+        <div class="prompt-label">Additional instructions (optional)</div>
+        <input type="text" class="prompt-input" id="prompt-input" placeholder="e.g. lifestyle setting, wooden table, add shadow...">
+      </div>
+
+      <div id="action-area" style="display:none;">
+        <button class="transform-btn" id="transform-btn">Transform photo</button>
+      </div>
+
+      <div class="error-msg" id="error-msg"></div>
+
+      <div class="loading-section" id="loading">
+        <div class="spinner"></div>
+        <div class="loading-text">Transforming your photo — this may take a moment</div>
+      </div>
+
+      <div class="result-section" id="result">
+        <div class="result-header">
+          <div class="result-title">Result</div>
+          <button class="download-btn" id="download-btn">Download enhanced photo</button>
+        </div>
+        <div class="comparison">
+          <div class="comparison-card">
+            <img id="original-img" alt="Original photo">
+            <div class="comparison-label">Original</div>
+          </div>
+          <div class="comparison-card">
+            <img id="result-img" alt="Enhanced photo">
+            <div class="comparison-label">Enhanced</div>
+          </div>
+        </div>
+        <button class="new-btn" id="new-btn">Transform another photo</button>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>ProductShot AI</p>
+    </div>
+  </footer>
+
+  <script>
+    const dropZone = document.getElementById("drop-zone");
+    const fileInput = document.getElementById("file-input");
+    const promptArea = document.getElementById("prompt-area");
+    const actionArea = document.getElementById("action-area");
+    const promptInput = document.getElementById("prompt-input");
+    const transformBtn = document.getElementById("transform-btn");
+    const loadingEl = document.getElementById("loading");
+    const resultEl = document.getElementById("result");
+    const errorEl = document.getElementById("error-msg");
+    const originalImg = document.getElementById("original-img");
+    const resultImg = document.getElementById("result-img");
+    const downloadBtn = document.getElementById("download-btn");
+    const newBtn = document.getElementById("new-btn");
+    const uploadArea = document.getElementById("upload-area");
+
+    let currentBase64 = null;
+    let resultBase64 = null;
+
+    dropZone.addEventListener("click", () => fileInput.click());
+
+    dropZone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropZone.classList.add("drag-over");
+    });
+
+    dropZone.addEventListener("dragleave", () => {
+      dropZone.classList.remove("drag-over");
+    });
+
+    dropZone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropZone.classList.remove("drag-over");
+      const file = e.dataTransfer.files[0];
+      if (file) handleFile(file);
+    });
+
+    fileInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) handleFile(file);
+    });
+
+    function handleFile(file) {
+      if (!file.type.match(/^image\/(jpeg|png|webp)$/)) {
+        showError("Please upload a JPEG, PNG, or WebP image.");
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        showError("File is too large. Maximum size is 10 MB.");
+        return;
+      }
+      hideError();
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        currentBase64 = e.target.result;
+        dropZone.classList.add("has-image");
+        dropZone.innerHTML = `
+          <div class="preview-wrapper">
+            <img src="${currentBase64}" alt="Uploaded product">
+          </div>
+          <div class="change-label">Click to change photo</div>
+        `;
+        promptArea.style.display = "block";
+        actionArea.style.display = "block";
+      };
+      reader.readAsDataURL(file);
+    }
+
+    transformBtn.addEventListener("click", async () => {
+      if (!currentBase64) return;
+
+      hideError();
+      uploadArea.style.display = "none";
+      promptArea.style.display = "none";
+      actionArea.style.display = "none";
+      resultEl.classList.remove("visible");
+      loadingEl.classList.add("visible");
+
+      try {
+        const resp = await fetch("/api/transform", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            image: currentBase64,
+            prompt: promptInput.value.trim() || undefined,
+          }),
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || data.error) {
+          throw new Error(data.error || "Something went wrong.");
+        }
+
+        resultBase64 = data.image;
+        originalImg.src = currentBase64;
+        resultImg.src = resultBase64;
+
+        loadingEl.classList.remove("visible");
+        resultEl.classList.add("visible");
+      } catch (err) {
+        loadingEl.classList.remove("visible");
+        uploadArea.style.display = "block";
+        promptArea.style.display = "block";
+        actionArea.style.display = "block";
+        showError(err.message);
+      }
+    });
+
+    downloadBtn.addEventListener("click", () => {
+      if (!resultBase64) return;
+      const a = document.createElement("a");
+      a.href = resultBase64;
+      a.download = "productshot-enhanced.png";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+
+    newBtn.addEventListener("click", () => {
+      currentBase64 = null;
+      resultBase64 = null;
+      fileInput.value = "";
+      promptInput.value = "";
+      resultEl.classList.remove("visible");
+      dropZone.classList.remove("has-image");
+      dropZone.innerHTML = `
+        <div class="drop-zone-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+          </svg>
+        </div>
+        <div class="drop-zone-text">Drag and drop your product photo, or <strong>browse</strong></div>
+        <div class="drop-zone-hint">JPEG or PNG, up to 10 MB</div>
+      `;
+      uploadArea.style.display = "block";
+      promptArea.style.display = "none";
+      actionArea.style.display = "none";
+    });
+
+    function showError(msg) {
+      errorEl.textContent = msg;
+      errorEl.classList.add("visible");
+    }
+
+    function hideError() {
+      errorEl.textContent = "";
+      errorEl.classList.remove("visible");
+    }
+  </script>
 </body>
 </html>

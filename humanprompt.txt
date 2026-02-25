@@ -1,0 +1,195 @@
+You are building and deploying a fully working web application called "ProductShot AI" — a tool that transforms amateur product photos into professional e-commerce product photography using AI.
+
+IMPORTANT: Before you start, read the file `skillagent.md` in this workspace. It contains critical instructions for GitHub deployment, Railway deployment, and WURK agent-to-human job creation that you MUST follow. The deployment steps, API quirks, and troubleshooting are all documented there. Read it thoroughly before writing any code.
+
+---
+
+## What You Are Building
+
+A web app where users can:
+1. Upload a product photo (any amateur photo of a physical product)
+2. Optionally add a text prompt with extra instructions (e.g. "white background", "lifestyle setting", "add shadow")
+3. Click a button to transform the photo into a high-quality, professional product photo suitable for an e-commerce webshop
+4. View the result side-by-side with the original
+5. Download the result in high resolution
+
+---
+
+## Tech Stack
+
+- **Backend**: Node.js + Express
+- **Frontend**: Vanilla HTML/CSS/JS (no frameworks — keep it simple and fast)
+- **AI Model**: OpenRouter API with `google/gemini-3-pro-image-preview`
+- **Deployment**: GitHub + Railway (follow skillagent.md exactly)
+- **Environment variables** are in `.env` — read them with the Read tool, never echo them in chat
+
+---
+
+## OpenRouter Image-to-Image API
+
+Endpoint: `https://openrouter.ai/api/v1/chat/completions`
+Auth: `Authorization: Bearer $OPENROUTER_API_KEY`
+
+To transform an uploaded image, send this request:
+
+```json
+{
+  "model": "google/gemini-3-pro-image-preview",
+  "modalities": ["text", "image"],
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "image_url",
+          "image_url": { "url": "data:image/jpeg;base64,BASE64_ENCODED_IMAGE" }
+        },
+        {
+          "type": "text",
+          "text": "Transform this product photo into a professional e-commerce product photograph. Clean white background, professional studio lighting, sharp focus, high resolution. The product should look premium and ready for a webshop listing. Keep the product exactly as it is but dramatically improve the presentation, lighting, and background."
+        }
+      ]
+    }
+  ]
+}
+```
+
+The response contains the generated image in: `choices[0].message.images[0].image_url.url` as a base64 data URL.
+
+If the user added an optional prompt, append it to the system text prompt. For example if they wrote "lifestyle wooden table setting", modify the prompt to include that instruction.
+
+---
+
+## UI/Design Requirements — THIS IS CRITICAL
+
+The UI must look like a real SaaS product. NOT like a typical AI demo or vibe-coded prototype. Think Linear, Vercel, Stripe-level design quality.
+
+Requirements:
+- **Minimalist**: Lots of whitespace, no clutter, no unnecessary elements
+- **Color palette**: Neutral/dark theme with one subtle accent color. Think: near-black backgrounds (#0a0a0a or #111), white text, one accent like soft blue or violet
+- **Typography**: Clean sans-serif. Use system fonts or Inter/Geist if you can load them from CDN. Large headings, small subtle labels
+- **Layout**: Centered single-column layout. Max-width container (800-900px). Clean card-based sections
+- **Upload area**: A large, elegant drag-and-drop zone with a subtle dashed border. Should feel premium, not like a file input
+- **Result display**: Side-by-side comparison (original vs enhanced) with clean labels
+- **Download button**: Prominent but not gaudy. Solid button with subtle hover state
+- **Loading state**: Elegant loading animation (subtle spinner or shimmer, NOT a basic browser spinner)
+- **Responsive**: Must work on mobile
+- **No stock images or placeholder illustrations**. Only show what the user uploads and what the AI generates
+- **Subtle animations**: Fade-ins, smooth transitions. Nothing flashy
+- **Professional copy**: Short, clear headlines. "Transform your product photos" not "AI Photo Magic!!!"
+- **Footer**: Clean and minimal with just the app name
+
+What to AVOID:
+- Gradients that look like a hackathon project
+- Bright neon colors
+- Rounded corners everywhere
+- Emoji in the UI
+- "Powered by AI" badges
+- Comic sans or playful fonts
+- Multiple columns on mobile
+- Heavy borders or shadows
+
+---
+
+## Development and Deployment Flow
+
+### Phase 1: Build the app
+1. Read `.env` to get all tokens (OPENROUTER_API_KEY, GIT_TOKEN, RAILWAY_API_KEY, SOLANA_WALLET_PK, HELIUS_KEY)
+2. Build the complete app (server.js, public/index.html, package.json, .gitignore)
+3. The server must:
+   - Serve static files from /public
+   - Have a POST /api/transform endpoint that accepts base64 image + optional prompt
+   - Proxy the OpenRouter API call (keep the API key server-side, never expose to frontend)
+   - Read PORT from process.env.PORT (Railway requirement)
+   - Handle errors gracefully and return clear error messages
+4. The frontend must:
+   - Allow drag-and-drop AND click-to-upload
+   - Convert uploaded image to base64
+   - Send to /api/transform with optional prompt text
+   - Display result side-by-side
+   - Allow download of result
+   - Show elegant loading state during processing
+   - Handle errors with user-friendly messages
+5. Test locally to make sure it works before deploying
+
+### Phase 2: Deploy
+Follow `skillagent.md` exactly:
+1. Git init, commit
+2. Create GitHub repo via API, push
+3. Create Railway project, service, domain via GraphQL API
+4. Create project token, deploy with `railway up`
+5. Verify the deployment is live and working
+
+### Phase 3: Human feedback loop (WURK)
+After the app is live and verified working:
+
+1. Create an agent-to-human job on WURK with these parameters:
+   - winners: 20
+   - perUser: 0.05
+   - description: Write a clear, detailed job description. Include the live Railway URL. Ask humans to:
+     * Visit the site
+     * Upload any product photo they have (or screenshot a product from the internet)
+     * Try the transformation feature
+     * Rate the UI design on a scale of 1-10 (1=ugly, 10=beautiful)
+     * Rate how professional/enterprise-worthy the design looks (1-10)
+     * Report any bugs or errors they encountered
+     * Suggest specific improvements to the UI, UX, or functionality
+     * State whether they would pay to use this tool (yes/no)
+   
+   The description must be clear enough that any internet user can follow it.
+
+2. SAVE the secret from the WURK response immediately.
+
+3. Wait 10 minutes (use sleep/timeout).
+
+4. Fetch submissions from WURK using the secret.
+
+5. Analyze ALL feedback carefully:
+   - Calculate average UI score and professionalism score
+   - List all reported bugs
+   - Collect all improvement suggestions
+   - Check the "would you pay" ratio
+
+6. Based on the feedback, make improvements to the app:
+   - Fix any reported bugs first
+   - Implement the most commonly requested improvements
+   - Improve UI elements that scored low
+   - Re-deploy to Railway (commit, push, railway up)
+
+7. REPEAT: Create another WURK job with the updated URL asking humans to review the IMPROVED version. Mention the version number and what was improved. Example: "This is version 3 — we fixed the upload bug, improved the loading animation, and darkened the background based on your feedback. Please review again."
+
+8. Continue this loop INDEFINITELY until ALL of the following conditions are met:
+   - Average UI score is 8+ out of 10
+   - Average professionalism score is 8+ out of 10
+   - No critical bugs reported
+   - Majority (>70%) say they would pay to use this tool
+   
+   There is NO maximum number of rounds. Keep going until humans are genuinely satisfied. If after a round the scores improved but haven't hit the targets yet, that means the process is working — keep iterating. Each round costs only $1.00 (20 × $0.05) so cost is not a concern.
+
+   IMPORTANT: Do NOT stop early. Do NOT skip rounds. Do NOT declare "good enough". The only way to exit this loop is by meeting ALL four conditions above based on real human feedback data.
+
+9. Between rounds, if submissions are still empty after 10 minutes, wait another 5 minutes and check again. Repeat until you have at least 5 submissions before analyzing. Humans need time.
+
+### Phase 4: Final report
+When done (all conditions met), provide a complete summary:
+- Final live URL
+- GitHub repo URL  
+- Railway dashboard URL
+- Number of feedback rounds completed
+- Score progression per round (show how scores improved over time)
+- Summary of key improvements made in each round
+- Total USDC spent on human feedback
+- Final consensus from humans
+- A list of all the changes made from version 1 to the final version
+
+---
+
+## Important Notes
+
+- The app must actually WORK end-to-end. Not a mockup. Users must be able to upload a real photo and get a real AI-transformed result back.
+- Keep the OpenRouter API key server-side only. The frontend should call your backend, which proxies to OpenRouter.
+- Set a reasonable max file size for uploads (e.g. 10MB).
+- The default transformation prompt should produce great results without the user needing to add anything. The optional prompt field is for fine-tuning only.
+- Handle the case where OpenRouter returns only text but no image (retry or show a clear error).
+- The entire app should be in a single page — no routing, no multi-page complexity.
+- Remember: Windows PowerShell does not support `&&` — use `;` to chain commands.
